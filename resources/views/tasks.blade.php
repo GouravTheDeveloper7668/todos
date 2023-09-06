@@ -31,7 +31,8 @@
                     <!-- Task Title -->
                     <div class="form-group">
                         <label for="task">Task Title:</label>
-                        <input type="text" class="form-control rounded-0" id="title" name="task" required>
+                        <input type="text" class="form-control rounded-0" id="title" name="task"  required>
+                        <input type="hidden" name="taskId" id="taskId">
                         <div class="invalid-feedback rounded-0">
                             Please enter a Task Title.
                         </div>
@@ -115,6 +116,9 @@
             event.target.parentNode.parentNode.remove();
         };
 
+        function editBtn (){
+            editTask(event.target.value);
+        };
 
         function deleteBtn (){
             deleteTask(event.target.value);
@@ -125,6 +129,7 @@
         function createTask() {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
+            const tid = document.getElementById('taskId').value;
 
             const xhr = new XMLHttpRequest();
             xhr.open('POST', '/api/tasks', true);
@@ -141,9 +146,9 @@
                                 </div>
                                 <p class="mb-1">${description}</p>
                                 <div class="btn-group">
-                                    <button type="button" value="${data.id}" onclick="completeBtn()" class="btn btn-dark complete-btn"> <i class="bi-check-square-fill"></i> Completed</button>
-                                    <button type="button" value="${data.id}" onclick="editBtn()" class="btn btn-dark edit-btn"> <i class="bi-pencil-square"></i> Edit</button>
-                                    <button type="button" value="${data.id}" onclick="deleteBtn()"  class="btn btn-dark delete-btn"> <i class="bi-trash-fill"></i> Delete</button>
+                                    <button type="button" value="${id}" onclick="completeBtn()" class="btn btn-dark complete-btn"> <i class="bi-check-square-fill"></i> Completed</button>
+                                    <button type="button" value="${id}" onclick="editBtn()" class="btn btn-dark edit-btn"> <i class="bi-pencil-square"></i> Edit</button>
+                                    <button type="button" value="${id}" onclick="deleteBtn()"  class="btn btn-dark delete-btn"> <i class="bi-trash-fill"></i> Delete</button>
                                 </div>
                             </div>
                         `;
@@ -159,11 +164,13 @@
             };
 
             const data = {
+                task_id:tid,
                 title: title,
-                description: description
+                description: description,
             };
 
             xhr.send(JSON.stringify(data));
+            createTask();
         }
 
         // Function to update a task's status
@@ -228,6 +235,28 @@
 
             xhr.send();
         }
+
+        function editTask(taskId) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/api/tasks/edit/${taskId}`, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        console.log(data);
+                        document.getElementById("taskId").value = data.id;
+                        document.getElementById("title").value = data.title;
+                        document.getElementById("description").value = data.description;
+                    } else { 
+                        // Handle error, e.g., display error message
+                        console.error('Error Editing task: ' + xhr.responseText);
+                    }
+                }
+            };  
+            xhr.send();
+            }
 
     </script>
     

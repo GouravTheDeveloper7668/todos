@@ -28,7 +28,7 @@ Route::post('/tasks', [TaskController::class,'store'])->name('tasks.store');
 Route::get('/tasks', [TaskController::class,'index'])->name('tasks.index');
 
 // Update (Edit) Task - Display the task edit form
-Route::get('/tasks/{task}/edit', [TaskController::class,'edit'])->name('tasks.edit');
+Route::get('/tasks/edit/{task}', [TaskController::class,'edit'])->name('tasks.edit');
 
 // Update (Edit) Task - Handle the task edit form submission
 Route::put('/tasks/{task}', [TaskController::class,'update'])->name('tasks.update');

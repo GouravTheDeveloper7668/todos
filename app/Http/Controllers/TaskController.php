@@ -15,12 +15,15 @@ class TaskController extends Controller
             'title' => 'required|max:255',
             'description' => 'required',
         ]);
-
         // Create a new task
-        $task = new Task();
-        $task->title = $request->input('title');
-        $task->description = $request->input('description');
-        $task->status = 'Pending'; // Set the initial status
+        if(isset($request->task_id)) {
+            $task = Task::find($request->task_id);
+        } else {
+            $task = new Task();
+        }
+            $task->title = $request->input('title');
+            $task->description = $request->input('description');
+            $task->status = 'Pending'; // Set the initial status
 
         // Save the task to the database
         $task->save();
@@ -64,15 +67,21 @@ class TaskController extends Controller
         // Optionally, return a response to indicate success
         return response()->json(['data' => $task], 200);
     }
+    
+    public function edit($id)
+    {
+        // Find the task by its ID
+        $task = Task::find($id);
+        
+        // Optionally, return a response to indicate success
+        return response()->json($task);
+    }
 
     public function destroy($id)
     {
         // Find the task by its ID
-        $task = Task::findOrFail($id);
-
-        // Delete the task
-        $task->delete();
-
+        $task = Task::where('id', $id)->delete();
+        
         // Optionally, return a response to indicate success
         return response()->json(['message' => 'Task deleted successfully'], 200);
     }
