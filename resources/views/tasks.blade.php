@@ -170,7 +170,6 @@
             };
 
             xhr.send(JSON.stringify(data));
-            createTask();
         }
 
         // Function to update a task's status
